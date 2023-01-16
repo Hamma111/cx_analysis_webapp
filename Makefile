@@ -4,7 +4,8 @@ docker_compose := docker-compose -f
 cr_compose     := $(docker_compose) docker-compose.cr.yml
 dev_compose    := $(docker_compose) docker-compose.dev.yml
 stage_compose  := $(docker_compose) docker-compose.stage.yml
-prod_compose   := $(docker_compose) docker-compose.prod.yml
+prod_co
+mpose   := $(docker_compose) docker-compose.prod.yml
 test_compose   := $(docker_compose) docker-compose.test.yml
 success        := success
 

@@ -5,7 +5,7 @@ x-common: &common
   tty: true
   restart: unless-stopped
   networks:
-    - project_name
+    - cx_analysis
 
 x-django-build: &django-build
   build:
@@ -15,8 +15,8 @@ x-django-build: &django-build
 services:
   celery:
     <<: *django-build
-    container_name: project_name-cc01
-    command: bash -c "celery -A project_name worker -l info"
+    container_name: cx_analysis-cc01
+    command: bash -c "celery -A cx_analysis worker -l info"
     depends_on:
       - django
       - redis
@@ -28,8 +28,8 @@ services:
 
   celery-beat:
     <<: *django-build
-    container_name: project_name-cb01
-    command: bash -c "celery -A project_name worker -l info --beat --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    container_name: cx_analysis-cb01
+    command: bash -c "celery -A cx_analysis worker -l info --beat --scheduler django_celery_beat.schedulers:DatabaseScheduler"
     depends_on:
       - django
       - redis
@@ -41,7 +41,7 @@ services:
 
   django:
     <<: *django-build
-    container_name: project_name-dc01
+    container_name: cx_analysis-dc01
     command: bash -c "python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
@@ -49,8 +49,8 @@ services:
       - ./config/env/dev/.env
     volumes:
       - ./:/code
-      - project_name_static_volume:/code/static
-      - project_name_media_volume:/code/media
+      - cx_analysis_static_volume:/code/static
+      - cx_analysis_media_volume:/code/media
     depends_on:
       - postgres
       - redis
@@ -58,7 +58,7 @@ services:
 
   flower:
     image: mher/flower:0.9.7
-    container_name: project_name-fc01
+    container_name: cx_analysis-fc01
     command:
       [
         "flower",
@@ -74,7 +74,7 @@ services:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile.dev
-    container_name: project_name-fe01
+    container_name: cx_analysis-fe01
     volumes:
       - "./frontend:/app"
       - "/app/node_modules"
@@ -86,28 +86,28 @@ services:
 
   postgres:
     image: postgres:13.3-alpine
-    container_name: project_name-pc01
+    container_name: cx_analysis-pc01
     env_file:
       - ./config/env/dev/.env
     ports:
       - "5432:5432"
     volumes:
-      - project_name_postgres_data:/var/lib/postgresql/data/
+      - cx_analysis_postgres_data:/var/lib/postgresql/data/
     <<: *common
 
   redis:
     image: redis:6.2-alpine
-    container_name: project_name-rc01
+    container_name: cx_analysis-rc01
     volumes:
-      - project_name_redis_data:/data
+      - cx_analysis_redis_data:/data
     <<: *common
 
 networks:
-  project_name:
+  cx_analysis:
     driver: bridge
 
 volumes:
-  project_name_postgres_data:
-  project_name_redis_data:
-  project_name_static_volume:
-  project_name_media_volume:
+  cx_analysis_postgres_data:
+  cx_analysis_redis_data:
+  cx_analysis_static_volume:
+  cx_analysis_media_volume:

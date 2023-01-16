@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="project_name API",
+        title="cx_analysis API",
         default_version="v1",
     ),
     public=True,
@@ -23,6 +23,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="swagger"),
     path("admin/", admin.site.urls),
+    path("api/currencies/", include('cx_analysis.currencies.urls')),
 ]
 
 if settings.ENABLE_DEBUG_TOOLS:

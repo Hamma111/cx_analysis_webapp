@@ -5,7 +5,7 @@ x-common: &common
   tty: true
   restart: unless-stopped
   networks:
-    - project_name
+    - cx_analysis
 
 x-django-build: &django-build
   build:
@@ -15,7 +15,7 @@ x-django-build: &django-build
 services:
   chrome:
     image: selenium/node-chrome:4.2.1-20220531
-    container_name: project_name-sc01
+    container_name: cx_analysis-sc01
     shm_size: 2gb
     ports:
       - "7900:7900"
@@ -29,15 +29,15 @@ services:
 
   django:
     <<: *django-build
-    container_name: project_name-dc01
+    container_name: cx_analysis-dc01
     ports:
       - "8000:8000"
     env_file:
       - ./config/env/test/.django
     volumes:
       - ./:/code
-      - project_name_static_volume:/code/static
-      - project_name_media_volume:/code/media
+      - cx_analysis_static_volume:/code/static
+      - cx_analysis_media_volume:/code/media
     depends_on:
       - postgres
       - redis
@@ -45,7 +45,7 @@ services:
 
   firefox:
     image: selenium/node-firefox:4.2.1-20220531
-    container_name: project_name-sf01
+    container_name: cx_analysis-sf01
     shm_size: 2gb
     ports:
       - "7901:7900"
@@ -61,7 +61,7 @@ services:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile.dev
-    container_name: project_name-fe01
+    container_name: cx_analysis-fe01
     volumes:
       - "./frontend:/app"
       - "/app/node_modules"
@@ -75,25 +75,25 @@ services:
 
   postgres:
     image: postgres:13.3-alpine
-    container_name: project_name-pc01
+    container_name: cx_analysis-pc01
     env_file:
       - ./config/env/test/.postgres
     ports:
       - "5432:5432"
     volumes:
-      - project_name_postgres_data:/var/lib/postgresql/data/
+      - cx_analysis_postgres_data:/var/lib/postgresql/data/
     <<: *common
 
   redis:
     image: redis:6.2-alpine
-    container_name: project_name-rc01
+    container_name: cx_analysis-rc01
     volumes:
-      - project_name_redis_data:/data
+      - cx_analysis_redis_data:/data
     <<: *common
 
   selenium-hub:
     image: selenium/hub:4.2.1-20220531
-    container_name: project_name-sh01
+    container_name: cx_analysis-sh01
     ports:
       - "4442:4442"
       - "4443:4443"
@@ -103,11 +103,11 @@ services:
     <<: *common
 
 networks:
-  project_name:
+  cx_analysis:
     driver: bridge
 
 volumes:
-  project_name_postgres_data:
-  project_name_redis_data:
-  project_name_static_volume:
-  project_name_media_volume:
+  cx_analysis_postgres_data:
+  cx_analysis_redis_data:
+  cx_analysis_static_volume:
+  cx_analysis_media_volume:

@@ -5,7 +5,7 @@ x-common: &common
   tty: true
   restart: unless-stopped
   networks:
-    - project_name
+    - cx_analysis
 
 x-django-build: &django-build
   build:
@@ -15,9 +15,9 @@ x-django-build: &django-build
 services:
   celery:
     <<: *django-build
-    container_name: project_name-cc01
+    container_name: cx_analysis-cc01
     restart: unless-stopped
-    command: bash -c "celery -A project_name worker -l info"
+    command: bash -c "celery -A cx_analysis worker -l info"
     depends_on:
       - django
       - redis
@@ -29,9 +29,9 @@ services:
 
   celery-beat:
     <<: *django-build
-    container_name: project_name-cb01
+    container_name: cx_analysis-cb01
     restart: unless-stopped
-    command: bash -c "celery -A project_name worker -l info --beat --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    command: bash -c "celery -A cx_analysis worker -l info --beat --scheduler django_celery_beat.schedulers:DatabaseScheduler"
     depends_on:
       - django
       - redis
@@ -50,7 +50,7 @@ services:
 
   django:
     <<: *django-build
-    container_name: project_name-dc01
+    container_name: cx_analysis-dc01
     restart: unless-stopped
     command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 4
     ports:
@@ -59,16 +59,16 @@ services:
       - ./config/env/prod/.django
     volumes:
       - ./:/code
-      - project_name_static_volume:/code/static
-      - project_name_media_volume:/code/media
+      - cx_analysis_static_volume:/code/static
+      - cx_analysis_media_volume:/code/media
     depends_on:
       - redis
     <<: *common
 
   flower:
     <<: *django-build
-    container_name: project_name-fc01
-    command: bash -c "celery -A project_name --broker=redis://${REDIS_URL}/0 flower --url_prefix=flower --basic_auth=${FLOWER_USERNAME}:${FLOWER_PASSWORD}"
+    container_name: cx_analysis-fc01
+    command: bash -c "celery -A cx_analysis --broker=redis://${REDIS_URL}/0 flower --url_prefix=flower --basic_auth=${FLOWER_USERNAME}:${FLOWER_PASSWORD}"
     ports:
       - "5555:5555"
     depends_on:
@@ -83,15 +83,15 @@ services:
     build:
       context: .
       dockerfile: ./config/nginx/Dockerfile
-    container_name: project_name-nc01
+    container_name: cx_analysis-nc01
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - ./config/nginx/prod/default.conf:/etc/nginx/conf.d/default.conf
-      - project_name_static_volume:/code/static
-      - project_name_media_volume:/code/media
+      - cx_analysis_static_volume:/code/static
+      - cx_analysis_media_volume:/code/media
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
     depends_on:
@@ -102,17 +102,17 @@ services:
 
   redis:
     image: redis:6.2-buster
-    container_name: project_name-rc01
+    container_name: cx_analysis-rc01
     restart: unless-stopped
     volumes:
-      - project_name_redis_data:/data
+      - cx_analysis_redis_data:/data
     <<: *common
 
 networks:
-  project_name:
+  cx_analysis:
     driver: bridge
 
 volumes:
-  project_name_redis_data:
-  project_name_static_volume:
-  project_name_media_volume:
+  cx_analysis_redis_data:
+  cx_analysis_static_volume:
+  cx_analysis_media_volume:

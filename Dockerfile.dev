@@ -7,4 +7,5 @@ WORKDIR /code
 
 COPY config/requirements/dev.txt /code/
 RUN pip install --upgrade pip
+
 RUN pip install -r /code/dev.txt

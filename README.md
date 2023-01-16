@@ -1,7 +1,7 @@
 # Project Boilerplate
 
 ## Tasks Scheduled
-1. `project_name.stripe.tasks.charge_pay_as_go_memberships` => 1st of every month at 2 am
+1. `cx_analysis.stripe.tasks.charge_pay_as_go_memberships` => 1st of every month at 2 am
 
 ## Required Changes
 
@@ -13,7 +13,7 @@
 - `config/env/*/.postgres`: change `project` with actual project name.
 - `Makefile`: change `project` with actual project name.
 - `config/settings/constance.py`: change `project` with actual project name.
-- `README.md`: change `Cogent-Labs-Inc` and `project_name-webapp` in "Create Issues" URLs.
+- `README.md`: change `Cogent-Labs-Inc` and `cx_analysis-webapp` in "Create Issues" URLs.
 - `tasks.yml`: change following in ansible-playbook
   - `<host-group-name>`: specify host group name
   - `<repo-url>`: specify repository URL
@@ -24,9 +24,9 @@
 
 ## Create Issues
 
-- [create new-feature issue](https://github.com/Cogent-Labs-Inc/project_name-webapp/issues/new?template=new-feature.md)
-- [create enhancement issue](https://github.com/Cogent-Labs-Inc/project_name-webapp/issues/new?template=enhancement.md)
-- [create bug issue](https://github.com/Cogent-Labs-Inc/project_name-webapp/issues/new?template=bug.md)
+- [create new-feature issue](https://github.com/Cogent-Labs-Inc/cx_analysis-webapp/issues/new?template=new-feature.md)
+- [create enhancement issue](https://github.com/Cogent-Labs-Inc/cx_analysis-webapp/issues/new?template=enhancement.md)
+- [create bug issue](https://github.com/Cogent-Labs-Inc/cx_analysis-webapp/issues/new?template=bug.md)
 
 ## Commands
 

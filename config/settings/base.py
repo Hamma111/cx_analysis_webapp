@@ -6,7 +6,7 @@ from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
-from project_name.core.env_utils import get_env_variable
+from cx_analysis.core.env_utils import get_env_variable
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -44,9 +44,12 @@ THIRD_PARTY_APPS = [
     "rangefilter",
     "django_rest_passwordreset",
     "ckeditor",
+    'django_filters',
 ]
 
 CUSTOM_APPS = [
+    "cx_analysis.core",
+    "cx_analysis.currencies"
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + CUSTOM_APPS
@@ -69,7 +72,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "project_name/templates"],
+        "DIRS": [BASE_DIR / "cx_analysis/templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -163,7 +166,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 CONSTANCE_BACKEND = "constance.backends.redisd.RedisBackend"
 CONSTANCE_REDIS_CONNECTION = f"{REDIS_HOST}://{REDIS_HOST}:{REDIS_PORT}/0"
-CONSTANCE_REDIS_PREFIX = "constance:project_name:"
+CONSTANCE_REDIS_PREFIX = "constance:cx_analysis:"
 
 from .constance import *  # noqa
 
@@ -193,14 +196,11 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
+    "DEFAULT_PERMISSION_CLASSES": [],
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
     ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 12,
+    "DEFAULT_PAGINATION_CLASS": None,
 }
 FRONTEND_URL = get_env_variable("FRONTEND_URL")
 
@@ -209,10 +209,6 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
-            "format": "{levelname} {asctime} {filename}:{lineno} {funcName} {message}",
-            "style": "{",
-        },
-        "simple": {
             "format": "{levelname} {asctime} {filename}:{lineno} {funcName} {message}",
             "style": "{",
         },
@@ -239,7 +235,7 @@ LOGGING = {
             "handlers": ["console", "file"],
             "level": "INFO",
         },
-        "project_name": {
+        "cx_analysis": {
             "handlers": ["console", "file"],
             "level": "INFO",
         },
